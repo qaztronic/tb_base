@@ -23,7 +23,7 @@ proc make_lib { lib {rebuild "false"} } {
   if {[file isdirectory  $lib]} {
     echo "INFO: Simulation library $lib already exists"
 
-    if { $rebuild == "true" } {
+    if { $rebuild == "rebuild" } {
       echo "INFO: Rebuilding library. Deleting and recompiling $lib"
       quit -sim
       file delete -force ./$lib
@@ -90,3 +90,26 @@ proc sim_restart {  } {
   }
 }
 
+# ------------------------------------
+proc sim_run_sim {  } {
+
+  if { [file exists ./pre_sim.do] } {
+    echo "INFO: found ./pre_sim.do"
+    do ./pre_sim.do
+  }
+
+  if {[file exists ./sim.do]} {
+    do ./sim.do
+  } else {
+    do ../../libs/sim.do
+  }
+
+  if { [file exists ./wave.do] } {
+    do ./wave.do
+  }
+
+  if { [file exists ./post_sim.do] } {
+    echo "INFO: found ./post_sim.do"
+    do ./post_sim.do
+  }
+}
