@@ -43,19 +43,31 @@ proc sim_compile_lib {lib {rebuild "false"} } {
   global env
 
   dict with lib {
-    if { !([file isdirectory ${dir}/sim/libs]) } {
-      file mkdir ${dir}/sim/libs
+    if { !([file isdirectory $dir/sim/libs]) } {
+      file mkdir $dir/sim/libs
     }
 
-    if {([file isdirectory ${dir}/sim/libs/${name}]) && ($rebuild == "false")} {
-      echo "INFO: Simulation library ${dir}/sim/libs/${name} already exists"
+    if {([file isdirectory $dir/sim/libs/$name]) && ($rebuild == "false")} {
+      echo "INFO: Simulation library $dir/sim/libs/$name already exists"
       return
     }
 
-    foreach subfolder [glob -type d ${dir}/src/*] {
-      echo "INFO: compiling ${subfolder} to ${name}"
-      make_lib ${dir}/sim/libs/${name}
-      vlog -work ${name} -f ${subfolder}/files.f
+    foreach src [glob -type d $dir/src/*] {
+      echo "INFO: compiling $src to $name"
+      make_lib $dir/sim/libs/$name
+
+      if {[file exists $src/files.f]} {
+        vlog -work $name -f $src/files.f
+      }
+    }
+
+    foreach sim [glob -type d $dir/sim/src/*] {
+      echo "INFO: compiling $sim to $name"
+      make_lib $dir/sim/libs/$name
+
+      if {[file exists $sim/files.f]} {
+        vlog -work $name -f $sim/files.f
+      }
     }
   }
 }
@@ -64,7 +76,6 @@ proc sim_compile_lib {lib {rebuild "false"} } {
 proc sim_restart {  } {
   global env
 
-  # work in progress files to compile
   if { [file exists ./wip.do] } {
     echo "INFO: found ./wip.do"
     do ./wip.do
@@ -112,4 +123,6 @@ proc sim_run_sim {  } {
     echo "INFO: found ./post_sim.do"
     do ./post_sim.do
   }
+
+  run -all
 }
