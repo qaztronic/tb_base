@@ -52,7 +52,7 @@ proc sim_compile_lib {lib {rebuild "false"} } {
       return
     }
 
-    foreach src [glob -type d $dir/src/*] {
+    foreach src [glob -nocomplain -type d $dir/src/*] {
       echo "INFO: compiling $src to $name"
       make_lib $dir/sim/libs/$name
 
@@ -61,7 +61,7 @@ proc sim_compile_lib {lib {rebuild "false"} } {
       }
     }
 
-    foreach sim [glob -type d $dir/sim/src/*] {
+    foreach sim [glob -nocomplain -type d $dir/sim/src/*] {
       echo "INFO: compiling $sim to $name"
       make_lib $dir/sim/libs/$name
 
